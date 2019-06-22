@@ -12,8 +12,8 @@ struct bqueue
 #define SUCCESS 0
 #define QUEUE_FULL 1
 
-SBQueue  *InitByteQueue (WORD);
-void      DestroyByteQueue (SBQueue *queue);
-int       Enqueue (SBQueue *, BYTE);
-BYTE      Dequeue (SBQueue *);
-void      FlushQueue (SBQueue *queue);
+SBQueue *InitByteQueue(WORD);
+void DestroyByteQueue(SBQueue *queue);
+int Enqueue(SBQueue *, BYTE);
+BYTE Dequeue(SBQueue *);
+void FlushQueue(SBQueue *queue);

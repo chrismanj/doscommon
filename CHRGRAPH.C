@@ -11,11 +11,11 @@ to subroutines
 #include <dos.h>
 #include <stdlib.h>
 
-#include <c:\progproj\c\common\include\types.h>
-#include <c:\progproj\c\common\include\debug.h>
-#include <c:\progproj\c\common\include\video.h>
-#include <c:\progproj\c\common\include\chrgraph.h>
-#include <c:\progproj\c\common\include\mem.h>
+#include "..\common\include\types.h"
+#include "..\common\include\debug.h"
+#include "..\common\include\video.h"
+#include "..\common\include\chrgraph.h"
+#include "..\common\include\mem.h"
 
 #define COLS 80
 #define ROWS 25
@@ -73,22 +73,22 @@ extern union REGS inregs, outregs;
     
 \******************************************************************************/
 
-void InitCharVideo (void)
+void InitCharVideo(void)
 {
-  textattrib  = 0x0f;
+  textattrib = 0x0f;
   frameattrib = 0x1e;
-  fillattrib  = 0x0f;
-  
+  fillattrib = 0x0f;
+
   chargraphcursor_x = chargraphcursor_y = 0;
-  
+
   if (GetDisplayType() == MONO)
     actual_screen_base = (BYTE _far *)0xb0000000L;
   else
     actual_screen_base = (BYTE _far *)0xb0008000L;
-  
+
   screen_base = actual_screen_base;
   chargraphcursor_loc = screen_base;
-  SetCursorShape (0x0607);
+  SetCursorShape(0x0607);
 }
 
 /******************************************************************************\
@@ -103,7 +103,7 @@ void InitCharVideo (void)
     
 \******************************************************************************/
 
-void SetTextAttrib (BYTE attrib)
+void SetTextAttrib(BYTE attrib)
 {
   textattrib = attrib;
 }
@@ -120,7 +120,7 @@ void SetTextAttrib (BYTE attrib)
     
 \******************************************************************************/
 
-BYTE GetTextAttrib (void)
+BYTE GetTextAttrib(void)
 {
   return textattrib;
 }
@@ -137,7 +137,7 @@ BYTE GetTextAttrib (void)
     
 \******************************************************************************/
 
-void SetFrameAttrib (BYTE attrib)
+void SetFrameAttrib(BYTE attrib)
 {
   frameattrib = attrib;
 }
@@ -154,7 +154,7 @@ void SetFrameAttrib (BYTE attrib)
     
 \******************************************************************************/
 
-BYTE GetFrameAttrib (void)
+BYTE GetFrameAttrib(void)
 {
   return frameattrib;
 }
@@ -171,7 +171,7 @@ BYTE GetFrameAttrib (void)
     
 \******************************************************************************/
 
-void SetFillAttrib (BYTE attrib)
+void SetFillAttrib(BYTE attrib)
 {
   fillattrib = attrib;
 }
@@ -188,7 +188,7 @@ void SetFillAttrib (BYTE attrib)
     
 \******************************************************************************/
 
-BYTE GetFillAttrib (void)
+BYTE GetFillAttrib(void)
 {
   return fillattrib;
 }
@@ -207,7 +207,7 @@ BYTE GetFillAttrib (void)
     
 \******************************************************************************/
 
-void SetFGColor (BYTE color)
+void SetFGColor(BYTE color)
 {
   textattrib = textattrib & (BYTE)0xf0 | color;
 }
@@ -226,7 +226,7 @@ void SetFGColor (BYTE color)
     
 \******************************************************************************/
 
-void SetBKColor (BYTE color)
+void SetBKColor(BYTE color)
 {
   textattrib = textattrib & (BYTE)0x0f | (BYTE)(color << 4);
 }
@@ -247,10 +247,10 @@ void SetBKColor (BYTE color)
     
 \******************************************************************************/
 
-void HChar (WORD row, WORD column, WORD length, BYTE ch)
+void HChar(WORD row, WORD column, WORD length, BYTE ch)
 {
   BYTE _far *position = screen_base + row * (COLS * 2) + (column << 1);
-  
+
   while (length--)
   {
     *position = ch;
@@ -274,11 +274,11 @@ void HChar (WORD row, WORD column, WORD length, BYTE ch)
     
 \******************************************************************************/
 
-void HCharC (WORD row, WORD column, WORD length, BYTE ch)
+void HCharC(WORD row, WORD column, WORD length, BYTE ch)
 {
   WORD _far *position = (WORD _far *)(screen_base + row * (COLS * 2) + (column << 1));
-  WORD       value    = (textattrib << 8) + ch;
-  
+  WORD value = (textattrib << 8) + ch;
+
   while (length--)
     *position++ = value;
 }
@@ -299,10 +299,10 @@ void HCharC (WORD row, WORD column, WORD length, BYTE ch)
     
 \******************************************************************************/
 
-void VChar (WORD row, WORD column, WORD length, BYTE ch)
+void VChar(WORD row, WORD column, WORD length, BYTE ch)
 {
   BYTE _far *position = screen_base + row * (COLS * 2) + (column << 1);
-  
+
   while (length--)
   {
     *position = ch;
@@ -326,11 +326,11 @@ void VChar (WORD row, WORD column, WORD length, BYTE ch)
     
 \******************************************************************************/
 
-void VCharC (WORD row, WORD column, WORD length, BYTE ch)
+void VCharC(WORD row, WORD column, WORD length, BYTE ch)
 {
   WORD _far *position = (WORD _far *)(screen_base + row * (COLS * 2) + (column << 1));
-  WORD       value    = (textattrib << 8) | ch;
-  
+  WORD value = (textattrib << 8) | ch;
+
   while (length--)
   {
     *position = value;
@@ -355,10 +355,10 @@ void VCharC (WORD row, WORD column, WORD length, BYTE ch)
     
 \******************************************************************************/
 
-void HAttrib (WORD row, WORD column, WORD length)
+void HAttrib(WORD row, WORD column, WORD length)
 {
   BYTE _far *position = screen_base + row * (COLS * 2) + (column << 1) + 1;
-  
+
   while (length--)
   {
     *position = textattrib;
@@ -381,7 +381,7 @@ void HAttrib (WORD row, WORD column, WORD length)
     
 \******************************************************************************/
 
-void CursorAt (WORD row, WORD column)
+void CursorAt(WORD row, WORD column)
 {
   chargraphcursor_x = column;
   chargraphcursor_y = row;
@@ -404,14 +404,14 @@ void CursorAt (WORD row, WORD column)
     
 \******************************************************************************/
 
-WORD SetCursorShape (WORD shape)
+WORD SetCursorShape(WORD shape)
 {
   WORD old_shape = cursor_shape;
-  
-  inregs.h.ah = 0x01;          /* Subfunction */
+
+  inregs.h.ah = 0x01; /* Subfunction */
   inregs.h.ch = (BYTE)(shape >> 8);
   inregs.h.cl = (BYTE)(shape & 0x0f);
-  int86 (0x10, &inregs, &outregs);
+  int86(0x10, &inregs, &outregs);
   cursor_shape = shape;
   return old_shape;
 }
@@ -430,16 +430,16 @@ WORD SetCursorShape (WORD shape)
     
 \******************************************************************************/
 
-void SetPhysicalCursorPos (WORD row, WORD column)
+void SetPhysicalCursorPos(WORD row, WORD column)
 {
   chargraphcursor_x = column;
   chargraphcursor_y = row;
   chargraphcursor_loc = screen_base + row * COLS + (column << 1);
-  inregs.h.ah = 0x02;        /* Subfunction */
-  inregs.h.bh = 0x00;        /* Page Number */
+  inregs.h.ah = 0x02;         /* Subfunction */
+  inregs.h.bh = 0x00;         /* Page Number */
   inregs.h.dh = (BYTE)row;    /* row */
-  inregs.h.dl = (BYTE)column;    /* column */
-  int86 (0x10, &inregs, &outregs);
+  inregs.h.dl = (BYTE)column; /* column */
+  int86(0x10, &inregs, &outregs);
 }
 
 /******************************************************************************\
@@ -455,13 +455,13 @@ void SetPhysicalCursorPos (WORD row, WORD column)
     
 \******************************************************************************/
 
-s_point GetPhysicalCursorPos (void)
+s_point GetPhysicalCursorPos(void)
 {
   s_point pos;
-  
+
   inregs.h.ah = 0x03;
   inregs.h.bh = 0x00;
-  int86 (0x10, &inregs, &outregs);
+  int86(0x10, &inregs, &outregs);
   pos.row = outregs.h.dh;
   pos.col = outregs.h.dl;
   return pos;
@@ -481,7 +481,7 @@ s_point GetPhysicalCursorPos (void)
     
 \******************************************************************************/
 
-void OutChar (BYTE ch)
+void OutChar(BYTE ch)
 {
   *chargraphcursor_loc = ch;
   chargraphcursor_loc += 2;
@@ -506,10 +506,10 @@ void OutChar (BYTE ch)
     
 \******************************************************************************/
 
-void OutCharC (BYTE ch)
+void OutCharC(BYTE ch)
 {
   *(chargraphcursor_loc + 1) = textattrib;
-  OutChar (ch);
+  OutChar(ch);
 }
 
 /******************************************************************************\
@@ -528,10 +528,10 @@ void OutCharC (BYTE ch)
     
 \******************************************************************************/
 
-void OutCharAt (WORD row, WORD column, BYTE ch)
+void OutCharAt(WORD row, WORD column, BYTE ch)
 {
-  CursorAt (row, column);
-  OutChar (ch);
+  CursorAt(row, column);
+  OutChar(ch);
 }
 
 /******************************************************************************\
@@ -550,10 +550,10 @@ void OutCharAt (WORD row, WORD column, BYTE ch)
     
 \******************************************************************************/
 
-void OutCharAtC (WORD row, WORD column, BYTE ch)
+void OutCharAtC(WORD row, WORD column, BYTE ch)
 {
-  CursorAt (row, column);
-  OutCharC (ch);
+  CursorAt(row, column);
+  OutCharC(ch);
 }
 
 /******************************************************************************\
@@ -570,10 +570,10 @@ void OutCharAtC (WORD row, WORD column, BYTE ch)
     
 \******************************************************************************/
 
-void OutText (const char *text)
+void OutText(const char *text)
 {
   while (*text)
-    OutChar (*text++);
+    OutChar(*text++);
 }
 
 /******************************************************************************\
@@ -590,10 +590,10 @@ void OutText (const char *text)
     
 \******************************************************************************/
 
-void OutTextC (const char *text)
+void OutTextC(const char *text)
 {
   while (*text)
-    OutCharC (*text++);
+    OutCharC(*text++);
 }
 
 /******************************************************************************\
@@ -610,11 +610,11 @@ void OutTextC (const char *text)
     
 \******************************************************************************/
 
-void OutTextAt (WORD row, WORD column, const char *text)
+void OutTextAt(WORD row, WORD column, const char *text)
 {
-  CursorAt (row, column);
+  CursorAt(row, column);
   while (*text)
-    OutChar (*text++);
+    OutChar(*text++);
 }
 
 /******************************************************************************\
@@ -631,11 +631,11 @@ void OutTextAt (WORD row, WORD column, const char *text)
     
 \******************************************************************************/
 
-void OutTextAtC (WORD row, WORD column, const char *text)
+void OutTextAtC(WORD row, WORD column, const char *text)
 {
-  CursorAt (row, column);
+  CursorAt(row, column);
   while (*text)
-    OutCharC (*text++);
+    OutCharC(*text++);
 }
 
 /******************************************************************************\
@@ -652,11 +652,11 @@ void OutTextAtC (WORD row, WORD column, const char *text)
     
 \******************************************************************************/
 
-void OutTextCentered (WORD row, const char *text)
+void OutTextCentered(WORD row, const char *text)
 {
-  CursorAt (row, (COLS/2) - (strlen(text) >> 1));
+  CursorAt(row, (COLS / 2) - (strlen(text) >> 1));
   while (*text)
-    OutChar (*text++);
+    OutChar(*text++);
 }
 
 /******************************************************************************\
@@ -676,22 +676,22 @@ void OutTextCentered (WORD row, const char *text)
     
 \******************************************************************************/
 
-void DrawBox (WORD row1, WORD column1, WORD height, WORD width)
+void DrawBox(WORD row1, WORD column1, WORD height, WORD width)
 {
   BYTE oldtextattrib = textattrib;
   int row2 = row1 + height - 1;
   int column2 = column1 + width - 1;
-  
+
   textattrib = frameattrib;
-  HCharC (row1, column1, width, (BYTE)'Í');
-  HCharC (row2, column1, width, (BYTE)'Í');
-  VCharC (row1, column1, height, (BYTE)'º');
-  VCharC (row1, column2, height, (BYTE)'º');
-  OutCharAtC (row1, column1, (BYTE)'É');
-  OutCharAtC (row1, column2, (BYTE)'»');
-  OutCharAtC (row2, column1, (BYTE)'È');
-  OutCharAtC (row2, column2, (BYTE)'¼');
-  
+  HCharC(row1, column1, width, (BYTE)'Í');
+  HCharC(row2, column1, width, (BYTE)'Í');
+  VCharC(row1, column1, height, (BYTE)'º');
+  VCharC(row1, column2, height, (BYTE)'º');
+  OutCharAtC(row1, column1, (BYTE)'É');
+  OutCharAtC(row1, column2, (BYTE)'»');
+  OutCharAtC(row2, column1, (BYTE)'È');
+  OutCharAtC(row2, column2, (BYTE)'¼');
+
   textattrib = oldtextattrib;
 }
 
@@ -713,13 +713,13 @@ void DrawBox (WORD row1, WORD column1, WORD height, WORD width)
       
 \******************************************************************************/
 
-void DrawRect (WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
+void DrawRect(WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
 {
   BYTE oldtextattrib = textattrib;
-  
+
   textattrib = fillattrib;
   while (height--)
-    HCharC (row1++, column1, width, ch);
+    HCharC(row1++, column1, width, ch);
   textattrib = oldtextattrib;
 }
 
@@ -741,14 +741,14 @@ void DrawRect (WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
     
 \******************************************************************************/
 
-void DrawBoxFilled (WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
+void DrawBoxFilled(WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
 {
-  DrawBox (row1, column1, height, width);
+  DrawBox(row1, column1, height, width);
   width -= 2;
   height -= 2;
   column1++;
   row1++;
-  DrawRect (row1, column1, height, width, ch);
+  DrawRect(row1, column1, height, width, ch);
 }
 
 /******************************************************************************\
@@ -768,19 +768,19 @@ void DrawBoxFilled (WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
     
 \******************************************************************************/
 
-WORD *SaveRect (WORD row1, WORD column1, WORD height, WORD width)
+WORD *SaveRect(WORD row1, WORD column1, WORD height, WORD width)
 {
   WORD *pmemlocation;
-  
-  pmemlocation = malloc ((size_t)(height * width << 1 + 4));
-  
+
+  pmemlocation = malloc((size_t)(height * width << 1 + 4));
+
   if (pmemlocation != NULL)
   {
     WORD *pcurlocation = pmemlocation;
     WORD _far *pscnlocation = (WORD _far *)(screen_base + row1 * (COLS * 2) + (column1 << 1));
     int left_right_value = COLS - width;
     int x;
-    
+
     *pcurlocation++ = (WORD)((row1 << 8) | column1);
     *pcurlocation++ = (WORD)((height << 8) | width);
     while (height--)
@@ -807,7 +807,7 @@ WORD *SaveRect (WORD row1, WORD column1, WORD height, WORD width)
     
 \******************************************************************************/
 
-void RestoreRect (WORD *memlocation)
+void RestoreRect(WORD *memlocation)
 {
   WORD *pcurlocation = memlocation;
   int row1 = *pcurlocation >> 8;
@@ -817,7 +817,7 @@ void RestoreRect (WORD *memlocation)
   WORD _far *pscnlocation = (WORD _far *)(screen_base + row1 * (COLS * 2) + (column1 << 1));
   int left_right_value = COLS - width;
   int x;
-  
+
   while (height--)
   {
     x = width;
@@ -825,7 +825,7 @@ void RestoreRect (WORD *memlocation)
       *pscnlocation++ = *pcurlocation++;
     pscnlocation += left_right_value;
   }
-  free (memlocation);
+  free(memlocation);
 }
 
 /******************************************************************************\
@@ -845,10 +845,10 @@ void RestoreRect (WORD *memlocation)
     
 \******************************************************************************/
 
-void RestoreRectAt (WORD *memlocation, WORD row, WORD column)
+void RestoreRectAt(WORD *memlocation, WORD row, WORD column)
 {
   *memlocation = (WORD)((row << 8) | column);
-  RestoreRect (memlocation);
+  RestoreRect(memlocation);
 }
 
 /******************************************************************************\
@@ -870,11 +870,11 @@ void RestoreRectAt (WORD *memlocation, WORD row, WORD column)
     
 \******************************************************************************/
 
-WORD *SaveAndDrawBox (WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
+WORD *SaveAndDrawBox(WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
 {
-  WORD *pmemlocation = SaveRect (row1, column1, height, width);
-  
-  DrawBoxFilled (row1, column1, height, width, ch);
+  WORD *pmemlocation = SaveRect(row1, column1, height, width);
+
+  DrawBoxFilled(row1, column1, height, width, ch);
   return pmemlocation;
 }
 
@@ -891,7 +891,7 @@ WORD *SaveAndDrawBox (WORD row1, WORD column1, WORD height, WORD width, BYTE ch)
     
 \******************************************************************************/
 
-void RedirectScreen (BYTE _far *new_screen_base)
+void RedirectScreen(BYTE _far *new_screen_base)
 {
   screen_base = new_screen_base;
 }
@@ -908,7 +908,7 @@ void RedirectScreen (BYTE _far *new_screen_base)
     
 \******************************************************************************/
 
-void ResetScreenBase (void)
+void ResetScreenBase(void)
 {
   screen_base = actual_screen_base;
 }

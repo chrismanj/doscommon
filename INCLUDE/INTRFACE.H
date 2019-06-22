@@ -13,7 +13,7 @@
 #define RUN_FUNC_IMMEDIATELY 8
 
 #define STRING_GADGET 0
-#define WORD_GADGET   1
+#define WORD_GADGET 1
 #define CHOICE_GADGET 2
 #define ON_OFF_GADGET 3
 
@@ -37,108 +37,108 @@ struct s_c_i
 struct s_mnu
 {
   char *title;
-  int  row;
-  int  col;
-  int  height;
-  int  width;
-  int  flags;
+  int row;
+  int col;
+  int height;
+  int width;
+  int flags;
   dlinkedlist *menuitems;
 };
 
 struct s_mnu_item
 {
-  int  row;
-  int  col;
-  int  flags;
+  int row;
+  int col;
+  int flags;
   char *text;
-  char  hotkeychar;
+  char hotkeychar;
   char *shortcut_text;
   void *target;
-  void (*function) (void *);
+  void (*function)(void *);
   void *parameter;
 };
 
 struct s_db
 {
   char *title;
-  int  row;
-  int  col;
-  int  height;
-  int  width;
+  int row;
+  int col;
+  int height;
+  int width;
   dlinkedlist *dbitems;
 };
 
 struct s_dialog_box_item
 {
-  int  type;
+  int type;
   char hotkeychar;
   void *gadget;
 };
 
 struct s_str_gad
 {
-  int  desc_row;
-  int  desc_col;
+  int desc_row;
+  int desc_col;
   char *description;
-  int  data_row;
-  int  data_col;
-  int  data_width;
+  int data_row;
+  int data_col;
+  int data_width;
   char *data;
-  int  length;
+  int length;
 };
 
 struct s_choice_gad
 {
-  int   desc_row;
-  int   desc_col;
+  int desc_row;
+  int desc_col;
   char *desc_text;
-  int   data_row;
-  int   data_col;
+  int data_row;
+  int data_col;
   char *menu_title;
-  int   numchoices;
-  int   menu_row;
-  int   menu_col;
-  int   menu_height;
-  int   menu_width;
+  int numchoices;
+  int menu_row;
+  int menu_col;
+  int menu_height;
+  int menu_width;
   s_choice_items *choices;
-  int  *data;
+  int *data;
   size_t max_length;
 };
 
 struct s_on_off_gad
 {
-  int   desc_row;
-  int   desc_col;
+  int desc_row;
+  int desc_col;
   char *desc_text;
-  int   data_row;
-  int   data_col;
-  BOOLN  *data;
+  int data_row;
+  int data_col;
+  BOOLN *data;
 };
 
 struct s_word_gad
 {
-  int   desc_row;
-  int   desc_col;
+  int desc_row;
+  int desc_col;
   char *desc_text;
-  int   data_row;
-  int   data_col;
+  int data_row;
+  int data_col;
   WORD *data;
 };
 
-void    SetMenuColors  (BYTE, BYTE);
-s_menu *CreateMenu     (char *, int, int, int, int, int);
-int     ChoiceMenu     (char *, int, int, int, int, int, s_choice_items *,
-			int *);
-int     AddMenuItem    (s_menu *, int, int, int, char *, char, char *, void *,
-			void (*)(void *), void *);
-int     DoMenu         (s_menu *);
-void    DestroyMenu    (s_menu *dmenu);
-void    ErrorBox       (char *);
-void   *ListBox        (char *, WORD, WORD, WORD, WORD, dlinkedlist *, char *(*)(void *));
+void SetMenuColors(BYTE, BYTE);
+s_menu *CreateMenu(char *, int, int, int, int, int);
+int ChoiceMenu(char *, int, int, int, int, int, s_choice_items *,
+               int *);
+int AddMenuItem(s_menu *, int, int, int, char *, char, char *, void *,
+                void (*)(void *), void *);
+int DoMenu(s_menu *);
+void DestroyMenu(s_menu *dmenu);
+void ErrorBox(char *);
+void *ListBox(char *, WORD, WORD, WORD, WORD, dlinkedlist *, char *(*)(void *));
 /*WORD    ListBox        (char *, int, int, int, int, int, void *[], char *(*)(void *));*/
-WORD   *MessageBox     (char *text);
-void    MessageBoxPause     (char *);
-s_dialog_box *CreateDialogBox (char *, int, int, int, int);
-int AddDBItem (s_dialog_box *, int, int, ...);
-void DoDialogBox (s_dialog_box *);
-void DestroyDialogBox (s_dialog_box *);
+WORD *MessageBox(char *text);
+void MessageBoxPause(char *);
+s_dialog_box *CreateDialogBox(char *, int, int, int, int);
+int AddDBItem(s_dialog_box *, int, int, ...);
+void DoDialogBox(s_dialog_box *);
+void DestroyDialogBox(s_dialog_box *);

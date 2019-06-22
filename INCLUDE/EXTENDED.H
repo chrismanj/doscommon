@@ -7,7 +7,7 @@
 
 #define keyINTRO 0      /* For keys common to all keyboards */
 #define keyINTRO2 224   /* For keypad and other keys unique to */
-			/* 101-key keyboard */
+      /* 101-key keyboard */
 
 /* Second byte will be one of the following keyended codes: */
 

@@ -6,10 +6,10 @@
 \******************************************************************************/
 
 #include <stdlib.h>
-#include <c:\progproj\c\common\include\types.h>
-#include <c:\progproj\c\common\include\debug.h>
-#include <c:\progproj\c\common\include\doublell.h>
-#include <c:\progproj\c\common\include\mem.h>
+#include "..\common\include\types.h"
+#include "..\common\include\debug.h"
+#include "..\common\include\doublell.h"
+#include "..\common\include\mem.h"
 
 /******************************************************************************\
 

@@ -1,1 +1,1 @@
-void EditDBStructure (char *DBName);
+void EditDBStructure(char *DBName);

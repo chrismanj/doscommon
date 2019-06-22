@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "..\common\include\types.h"
-/*#include "..\common\include\common.h"*/
 #include "..\common\include\debug.h"
 #include "..\common\include\bqueue.h"
 #include "..\common\include\keybrd.h"
@@ -21,13 +20,13 @@
     
 \******************************************************************************/
 
-SBQueue *InitByteQueue (WORD size)
+SBQueue *InitByteQueue(WORD size)
 {
-  SBQueue *newQueue = malloc (sizeof(SBQueue) + (size_t)size);
+  SBQueue *newQueue = malloc(sizeof(SBQueue) + (size_t)size);
   if (newQueue != NULL)
   {
     newQueue->buffer_start = newQueue->head = newQueue->tail =
-      (char *)newQueue + sizeof(SBQueue);
+        (char *)newQueue + sizeof(SBQueue);
     newQueue->buffer_end = newQueue->buffer_start + size;
     newQueue->size = size;
     newQueue->count = 0;
@@ -47,11 +46,11 @@ SBQueue *InitByteQueue (WORD size)
     
 \******************************************************************************/
 
-int Enqueue (SBQueue *queue, BYTE ch)
+int Enqueue(SBQueue *queue, BYTE ch)
 {
   if (queue->count >= queue->size)
     return QUEUE_FULL;
-  
+
   *queue->tail = ch;
   if (++queue->tail == queue->buffer_end)
     queue->tail = queue->buffer_start;
@@ -71,11 +70,11 @@ int Enqueue (SBQueue *queue, BYTE ch)
     
 \******************************************************************************/
 
-BYTE Dequeue (SBQueue *queue)
+BYTE Dequeue(SBQueue *queue)
 {
   if (queue->count == 0)
     return 0;
-  
+
   if (queue->head == queue->buffer_end)
     queue->head = queue->buffer_start;
   queue->count--;
@@ -94,7 +93,7 @@ BYTE Dequeue (SBQueue *queue)
     
 \******************************************************************************/
 
-void FlushQueue (SBQueue *queue)
+void FlushQueue(SBQueue *queue)
 {
   queue->count = 0;
   queue->head = queue->tail;
@@ -112,8 +111,7 @@ void FlushQueue (SBQueue *queue)
     
 \******************************************************************************/
 
-void DestroyByteQueue (SBQueue *queue)
+void DestroyByteQueue(SBQueue *queue)
 {
   free(queue);
 }
-

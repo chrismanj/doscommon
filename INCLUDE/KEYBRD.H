@@ -367,20 +367,20 @@
 #define KEY_CTL_KENTER          0x220d
 #define KEY_ALT_KENTER          0x120d
 
-void FlushKeyBuffer (void);
-void InitKeyboard (void);
-void DeInitKeyboard (void);
-WORD GetAKey (void);
-int  KeyInBuffer (void);
-int  IsASCIIKey (WORD);
-int  IsNotASCIIKey (WORD);
-WORD WaitForKeyPress (void);
-void CapsLockOn (void);
-void CapsLockOff (void);
-void ToggleCapsLock (void);
-void NumLockOn (void);
-void NumLockOff (void);
-BOOLN IsShifted (WORD);
-BOOLN IsAlted (WORD);
-BOOLN IsCtrled (WORD);
-BOOLN IsCtrlCode (WORD key);
+void FlushKeyBuffer(void);
+void InitKeyboard(void);
+void DeInitKeyboard(void);
+WORD GetAKey(void);
+int KeyInBuffer(void);
+int IsASCIIKey(WORD);
+int IsNotASCIIKey(WORD);
+WORD WaitForKeyPress(void);
+void CapsLockOn(void);
+void CapsLockOff(void);
+void ToggleCapsLock(void);
+void NumLockOn(void);
+void NumLockOff(void);
+BOOLN IsShifted(WORD);
+BOOLN IsAlted(WORD);
+BOOLN IsCtrled(WORD);
+BOOLN IsCtrlCode(WORD key);

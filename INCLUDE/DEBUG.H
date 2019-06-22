@@ -6,9 +6,8 @@
 
 #ifdef DEBUG
 #define MEM_DEBUG 1
-void OutDebugText (char *);
-void DebugPause (void);
+void OutDebugText(char *);
+void DebugPause(void);
 #endif
 
 #endif
-

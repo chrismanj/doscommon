@@ -1,49 +1,49 @@
 /******************************************************************************\
-				  WINDOW.C
+          WINDOW.C
  09-03-98: Initial version created
  09-06-98: Added the following code to make line wrap optional
-	   line_wrap boolean added to object
-	   Code added in WindowPrintChar
-	   Routines WindowGetLineWrap and WindowSetLineWrap created
+     line_wrap boolean added to object
+     Code added in WindowPrintChar
+     Routines WindowGetLineWrap and WindowSetLineWrap created
  09-06-98: Added WindowResetAttribute routine
-	   Added WindowSetAttribute routine
-	   Added WindowGetAttribute routine
+     Added WindowSetAttribute routine
+     Added WindowGetAttribute routine
  09-18-98: Added WindowGetCharAt routine
  09-23-98: Changed WindowCursorAt to return if the coordinates passed are
-	   outside the window
+     outside the window
  10-08-98: Added WindowEraseToBOL
-	   Added WindowEraseLine
-	   Fixed WindowGetCharAt (For some reason it never used the window
-	     handle passed to it)
-	   Added def_attrib member variable and modified the following
-	     routines to use it instead of cur_attrib-
-	     WindowScrollUp
-	     WindowScrollDown
-	     WindowEraseToEnd
-	     WindowEraseToEOL
-	     WindowEraseToBOL
-	     WindowEraseLine
-	     WindowClear
-	   Modified WindowResetAttrib to actually change the cur_attrib member
-	     variable instead of just recoloring the characters in the window
+     Added WindowEraseLine
+     Fixed WindowGetCharAt (For some reason it never used the window
+       handle passed to it)
+     Added def_attrib member variable and modified the following
+       routines to use it instead of cur_attrib-
+       WindowScrollUp
+       WindowScrollDown
+       WindowEraseToEnd
+       WindowEraseToEOL
+       WindowEraseToBOL
+       WindowEraseLine
+       WindowClear
+     Modified WindowResetAttrib to actually change the cur_attrib member
+       variable instead of just recoloring the characters in the window
  10-09-98: Modified WindowScrollUp and WindowScrollDown to take new parameters
-	     row, col, row2, & col2 instead of just the window handle.
+       row, col, row2, & col2 instead of just the window handle.
  10-12-98: Added cursor_shape member variable
-	   Added WindowSetCursorShape, WindowGetCursorShape Routines
-	   Added sound_on member variable
-	   Added WindowGetSoundOn & WindowSetSoundOn routines
+     Added WindowSetCursorShape, WindowGetCursorShape Routines
+     Added sound_on member variable
+     Added WindowGetSoundOn & WindowSetSoundOn routines
  10-13-98: Added WindowGetDefAttrib & WindowSetDefAttrib routines
-	   Changed WindowPrintChar so it prints nothing if character 0 is passed
-	   Added empty TAB handler to WindowPrintChar
+     Changed WindowPrintChar so it prints nothing if character 0 is passed
+     Added empty TAB handler to WindowPrintChar
  10-15-98: Added WindowPrintString routine
  10-17-98: Added title, attributes, pSaveRectBuff, top_margin, bottom_margin,
-	    left_margin, & right_margin member variables
-	   Added WindowShowTitle routine
-	   Modified almost all routines to use margin variables instead of top,
-	    bottom, left, & right.
+      left_margin, & right_margin member variables
+     Added WindowShowTitle routine
+     Modified almost all routines to use margin variables instead of top,
+      bottom, left, & right.
  10-20-98: Added WindowSave & WindowRestore
            Fixed WindowResetAttribute bug and made it do what I intended for it
-	     to do in the first place,
+       to do in the first place,
  11-11-98: Added WindowSetLeftMargin & WindowSetRightMargin
  11-17-98: Added WindowMove
  11-18-98: Added the following features to WindowShowTitle:
@@ -56,11 +56,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <c:\progproj\c\common\include\types.h>
-#include <c:\progproj\c\common\include\debug.h>
-#include <c:\progproj\c\common\include\chrgraph.h>
-#include <c:\progproj\c\common\include\speaker.h>
-#include <c:\progproj\c\common\include\window.h>
+#include "..\common\include\types.h"
+#include "..\common\include\debug.h"
+#include "..\common\include\chrgraph.h"
+#include "..\common\include\speaker.h"
+#include "..\common\include\window.h"
 
 #define COLS 80
 #define ROWS 25
@@ -72,9 +72,9 @@ extern WORD frameattrib;
 
 \******************************************************************************/
 
-winhdl *CreateWindow (char *title, int top, int left, int height, int width, WORD attrib, DWORD attributes)
+winhdl *CreateWindow(char *title, int top, int left, int height, int width, WORD attrib, DWORD attributes)
 {
-  winhdl *new_window = malloc (sizeof(winhdl));
+  winhdl *new_window = malloc(sizeof(winhdl));
   if (new_window != NULL)
   {
     new_window->top = top;
@@ -91,13 +91,13 @@ winhdl *CreateWindow (char *title, int top, int left, int height, int width, WOR
     new_window->sound_on = TRUE;
     new_window->attributes = attributes;
     if (attributes & SAVEUNDER)
-      new_window->pSaveRectBuff = SaveRect (top, left, height, width);
+      new_window->pSaveRectBuff = SaveRect(top, left, height, width);
     else
       new_window->pSaveRectBuff = NULL;
     if (attributes & FRAME)
     {
       DrawBox(top, left, height, width);
-      WindowSetTitle (new_window, title);
+      WindowSetTitle(new_window, title);
       new_window->top_margin = top + 1;
       new_window->bottom_margin = new_window->bottom - 1;
       new_window->left_margin = left + 1;
@@ -116,8 +116,8 @@ winhdl *CreateWindow (char *title, int top, int left, int height, int width, WOR
     new_window->cursor_y = new_window->top_margin;
     new_window->pSavedWindow = NULL;
     if (attributes & CLEAR)
-      WindowClear (new_window);
-    SetPhysicalCursorPos (new_window->cursor_y, new_window->cursor_x);
+      WindowClear(new_window);
+    SetPhysicalCursorPos(new_window->cursor_y, new_window->cursor_x);
   }
   return new_window;
 }
@@ -126,23 +126,23 @@ winhdl *CreateWindow (char *title, int top, int left, int height, int width, WOR
 
 \******************************************************************************/
 
-void DestroyWindow (winhdl *window)
+void DestroyWindow(winhdl *window)
 {
   if (window->pSaveRectBuff != NULL)
-    RestoreRect (window->pSaveRectBuff);
-  free (window);
+    RestoreRect(window->pSaveRectBuff);
+  free(window);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowSetTitle (winhdl *window, char *text)
+void WindowSetTitle(winhdl *window, char *text)
 {
   char temp_ch = 0;
 
   window->title = text;
-  HChar (window->top, window->left + 2, window->width - 4, 'Í');
+  HChar(window->top, window->left + 2, window->width - 4, 'Í');
   if (*text)
   {
     if (strlen(text) > window->width - 8)
@@ -150,9 +150,9 @@ void WindowSetTitle (winhdl *window, char *text)
       temp_ch = text[window->width - 8];
       text[window->width - 8] = 0;
     }
-    OutTextAt (window->top, window->left + 2, "µ ");
-    OutText (text);
-    OutText (" Æ");
+    OutTextAt(window->top, window->left + 2, "µ ");
+    OutText(text);
+    OutText(" Æ");
     if (temp_ch != 0)
       text[window->width - 8] = temp_ch;
   };
@@ -162,83 +162,83 @@ void WindowSetTitle (winhdl *window, char *text)
 
 \******************************************************************************/
 
-void WindowPrintChar (winhdl *window, int ch)
+void WindowPrintChar(winhdl *window, int ch)
 {
   switch (ch)
   {
 
-    case 0:
-      break;
+  case 0:
+    break;
 
-    case 7:
-      if (window->sound_on)
-	DoNoteOnce (C4, 10);
-      break;
+  case 7:
+    if (window->sound_on)
+      DoNoteOnce(C4, 10);
+    break;
 
-    case 8:
-      if (window->cursor_x == window->left_margin && window->cursor_y == window->top_margin)
-	break;
-      window->cursor_x--;
-      /**((WORD *)screen_base + window->cursor_y * COLS + window->cursor_x) = window->cur_attrib<<8 | ' ';*/
+  case 8:
+    if (window->cursor_x == window->left_margin && window->cursor_y == window->top_margin)
       break;
+    window->cursor_x--;
+    /**((WORD *)screen_base + window->cursor_y * COLS + window->cursor_x) = window->cur_attrib<<8 | ' ';*/
+    break;
 
-    case 9:	/* Tab */
-      break;
+  case 9: /* Tab */
+    break;
 
-    case 10:
-      window->cursor_y++;
-      if (window->cursor_y > window->bottom_margin)
+  case 10:
+    window->cursor_y++;
+    if (window->cursor_y > window->bottom_margin)
+    {
+      window->cursor_y--;
+      WindowScrollUp(window, 0, 0, window->margin_height - 1, window->margin_width - 1);
+    }
+    break;
+
+  case 13:
+    window->cursor_x = window->left_margin;
+    break;
+
+  default:
+    *((WORD *)screen_base + window->cursor_y * COLS + window->cursor_x++) = window->cur_attrib << 8 | (BYTE)ch;
+    if (window->cursor_x > window->right_margin)
+    {
+      if (window->line_wrap == TRUE)
       {
-	window->cursor_y--;
-	WindowScrollUp (window, 0, 0, window->margin_height - 1, window->margin_width - 1);
+        window->cursor_x = window->left_margin;
+        window->cursor_y++;
+        if (window->cursor_y > window->bottom_margin)
+        {
+          window->cursor_y--;
+          WindowScrollUp(window, 0, 0, window->margin_height - 1, window->margin_width - 1);
+        }
       }
-      break;
-
-    case 13:
-      window->cursor_x = window->left_margin;
-      break;
-
-    default:
-      *((WORD *)screen_base + window->cursor_y * COLS + window->cursor_x++) = window->cur_attrib<<8 | (BYTE)ch;
-      if (window->cursor_x > window->right_margin)
-      {
-	if (window->line_wrap == TRUE)
-	{
-	  window->cursor_x = window->left_margin;
-	  window->cursor_y++;
-	  if (window->cursor_y > window->bottom_margin)
-	  {
-	    window->cursor_y--;
-	    WindowScrollUp (window, 0, 0, window->margin_height - 1, window->margin_width - 1);
-	  }
-	}
-	else
-	  window->cursor_x = window->right_margin;
-      }
+      else
+        window->cursor_x = window->right_margin;
+    }
   }
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowPrintString (winhdl *window, char *string)
+void WindowPrintString(winhdl *window, char *string)
 {
   while (*string)
-    WindowPrintChar (window, *string++);
+    WindowPrintChar(window, *string++);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowScrollUp (winhdl *window, int row, int col, int row2, int col2)
+void WindowScrollUp(winhdl *window, int row, int col, int row2, int col2)
 {
   int x, y;
   WORD *source;
   WORD *dest;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
   row = row + window->top_margin;
   col = col + window->left_margin;
   row2 = row2 + window->top_margin;
@@ -261,12 +261,12 @@ void WindowScrollUp (winhdl *window, int row, int col, int row2, int col2)
 
 \******************************************************************************/
 
-void WindowScrollDown (winhdl *window, int row, int col, int row2, int col2)
+void WindowScrollDown(winhdl *window, int row, int col, int row2, int col2)
 {
   int x, y;
   WORD *source;
   WORD *dest;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
   row = row + window->top_margin;
   col = col + window->left_margin;
   row2 = row2 + window->top_margin;
@@ -289,12 +289,12 @@ void WindowScrollDown (winhdl *window, int row, int col, int row2, int col2)
 
 \******************************************************************************/
 
-void WindowEraseToEnd (winhdl *window)
+void WindowEraseToEnd(winhdl *window)
 {
   WORD *dest;
   int x;
   int y = window->cursor_y;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
 
   dest = (WORD *)screen_base + y * COLS + window->cursor_x;
   for (x = window->cursor_x; x <= window->right_margin; x++)
@@ -312,11 +312,11 @@ void WindowEraseToEnd (winhdl *window)
 
 \******************************************************************************/
 
-void WindowEraseToEOL (winhdl *window)
+void WindowEraseToEOL(winhdl *window)
 {
   WORD *dest;
   int x;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
 
   dest = (WORD *)screen_base + window->cursor_y * COLS + window->cursor_x;
   for (x = window->cursor_x; x <= window->right_margin; x++)
@@ -327,11 +327,11 @@ void WindowEraseToEOL (winhdl *window)
 
 \******************************************************************************/
 
-void WindowEraseToBOL (winhdl *window)
+void WindowEraseToBOL(winhdl *window)
 {
   WORD *dest;
   int x;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
 
   dest = (WORD *)screen_base + window->cursor_y * COLS + window->cursor_x;
   for (x = window->cursor_x; x >= window->left_margin; x--)
@@ -342,11 +342,11 @@ void WindowEraseToBOL (winhdl *window)
 
 \******************************************************************************/
 
-void WindowEraseLine (winhdl *window)
+void WindowEraseLine(winhdl *window)
 {
   WORD *dest;
   int x;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
 
   dest = (WORD *)screen_base + window->cursor_y * COLS + window->left_margin;
   for (x = window->left_margin; x <= window->right_margin; x++)
@@ -357,17 +357,17 @@ void WindowEraseLine (winhdl *window)
 
 \******************************************************************************/
 
-void WindowClear (winhdl *window)
+void WindowClear(winhdl *window)
 {
   int x, y;
   WORD *dest;
-  WORD value = window->def_attrib<<8 | ' ';
+  WORD value = window->def_attrib << 8 | ' ';
 
   for (y = window->top_margin; y <= window->bottom_margin; y++)
   {
     dest = (WORD *)screen_base + y * COLS + window->left_margin;
     for (x = window->left_margin; x <= window->right_margin; x++)
-      *dest++ =value;
+      *dest++ = value;
   }
 }
 
@@ -375,44 +375,44 @@ void WindowClear (winhdl *window)
 
 \******************************************************************************/
 
-void WindowCursorAt (winhdl *window, int x, int y)
+void WindowCursorAt(winhdl *window, int x, int y)
 {
   if ((window->left_margin + x > window->right_margin) || (window->top_margin + y > window->bottom_margin))
     return;
   window->cursor_x = window->left_margin + x;
   window->cursor_y = window->top_margin + y;
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowSetCursorRow (winhdl *window, int y)
+void WindowSetCursorRow(winhdl *window, int y)
 {
   if (window->top_margin + y > window->bottom_margin)
     return;
   window->cursor_y = window->top_margin + y;
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowSetCursorCol (winhdl *window, int x)
+void WindowSetCursorCol(winhdl *window, int x)
 {
   if (window->left_margin + x > window->right_margin)
     return;
   window->cursor_x = window->left_margin + x;
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-int WindowGetCursorY (winhdl *window)
+int WindowGetCursorY(winhdl *window)
 {
   return window->cursor_y - window->top_margin;
 }
@@ -421,7 +421,7 @@ int WindowGetCursorY (winhdl *window)
 
 \******************************************************************************/
 
-int WindowGetCursorX (winhdl *window)
+int WindowGetCursorX(winhdl *window)
 {
   return window->cursor_x - window->left_margin;
 }
@@ -430,12 +430,12 @@ int WindowGetCursorX (winhdl *window)
 
 \******************************************************************************/
 
-BOOLN WindowCursorUp (winhdl *window)
+BOOLN WindowCursorUp(winhdl *window)
 {
   if (window->cursor_y > window->top_margin)
   {
     window->cursor_y--;
-    SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+    SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
     return TRUE;
   }
   return FALSE;
@@ -445,12 +445,12 @@ BOOLN WindowCursorUp (winhdl *window)
 
 \******************************************************************************/
 
-BOOLN WindowCursorDown (winhdl *window)
+BOOLN WindowCursorDown(winhdl *window)
 {
   if (window->cursor_y < window->bottom_margin)
   {
     window->cursor_y++;
-    SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+    SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
     return TRUE;
   }
   return FALSE;
@@ -460,12 +460,12 @@ BOOLN WindowCursorDown (winhdl *window)
 
 \******************************************************************************/
 
-BOOLN WindowCursorLeft (winhdl *window)
+BOOLN WindowCursorLeft(winhdl *window)
 {
   if (window->cursor_x > window->left_margin)
   {
     window->cursor_x--;
-    SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+    SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
     return TRUE;
   }
   return FALSE;
@@ -475,12 +475,12 @@ BOOLN WindowCursorLeft (winhdl *window)
 
 \******************************************************************************/
 
-BOOLN WindowCursorRight (winhdl *window)
+BOOLN WindowCursorRight(winhdl *window)
 {
   if (window->cursor_x < window->right_margin)
   {
     window->cursor_x++;
-    SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+    SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
     return TRUE;
   }
   return FALSE;
@@ -490,7 +490,7 @@ BOOLN WindowCursorRight (winhdl *window)
 
 \******************************************************************************/
 
-BOOLN WindowGetLineWrap (winhdl *window)
+BOOLN WindowGetLineWrap(winhdl *window)
 {
   return window->line_wrap;
 }
@@ -499,7 +499,7 @@ BOOLN WindowGetLineWrap (winhdl *window)
 
 \******************************************************************************/
 
-void WindowSetLineWrap (winhdl *window, BOOLN new_line_wrap_val)
+void WindowSetLineWrap(winhdl *window, BOOLN new_line_wrap_val)
 {
   window->line_wrap = new_line_wrap_val;
 }
@@ -508,7 +508,7 @@ void WindowSetLineWrap (winhdl *window, BOOLN new_line_wrap_val)
 
 \******************************************************************************/
 
-void WindowResetAttribute (winhdl *window, int attrib)
+void WindowResetAttribute(winhdl *window, int attrib)
 {
   int x, y;
   BYTE *dest;
@@ -516,7 +516,7 @@ void WindowResetAttribute (winhdl *window, int attrib)
 
   for (y = window->top_margin; y <= window->bottom_margin; y++)
   {
-    dest = screen_base + y * 160 + (window->left_margin<<1) + 1;
+    dest = screen_base + y * 160 + (window->left_margin << 1) + 1;
     for (x = window->left_margin; x <= window->right_margin; x++)
     {
       *dest = new_attrib;
@@ -529,7 +529,7 @@ void WindowResetAttribute (winhdl *window, int attrib)
 
 \******************************************************************************/
 
-void WindowSetAttribute (winhdl *window, int attrib)
+void WindowSetAttribute(winhdl *window, int attrib)
 {
   window->cur_attrib = attrib;
 }
@@ -538,7 +538,7 @@ void WindowSetAttribute (winhdl *window, int attrib)
 
 \******************************************************************************/
 
-int WindowGetAttribute (winhdl *window)
+int WindowGetAttribute(winhdl *window)
 {
   return window->cur_attrib;
 }
@@ -547,26 +547,26 @@ int WindowGetAttribute (winhdl *window)
 
 \******************************************************************************/
 
-int WindowGetCharAt (winhdl *window, int x, int y)
+int WindowGetCharAt(winhdl *window, int x, int y)
 {
-  return (int)(*(screen_base + (window->top_margin + y) * 160 + ((window->left_margin + x)<<1)));
+  return (int)(*(screen_base + (window->top_margin + y) * 160 + ((window->left_margin + x) << 1)));
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowSetCursorShape (winhdl *window, WORD new_curs_shape)
+void WindowSetCursorShape(winhdl *window, WORD new_curs_shape)
 {
   window->cursor_shape = new_curs_shape;
-  SetCursorShape (new_curs_shape);
+  SetCursorShape(new_curs_shape);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-WORD WindowGetCursorShape (winhdl *window)
+WORD WindowGetCursorShape(winhdl *window)
 {
   return window->cursor_shape;
 }
@@ -575,7 +575,7 @@ WORD WindowGetCursorShape (winhdl *window)
 
 \******************************************************************************/
 
-void WindowSetSoundOn (winhdl *window, BOOLN sound_setting)
+void WindowSetSoundOn(winhdl *window, BOOLN sound_setting)
 {
   window->sound_on = sound_setting;
 }
@@ -584,7 +584,7 @@ void WindowSetSoundOn (winhdl *window, BOOLN sound_setting)
 
 \******************************************************************************/
 
-BOOLN WindowGetSoundOn (winhdl *window)
+BOOLN WindowGetSoundOn(winhdl *window)
 {
   return window->sound_on;
 }
@@ -593,7 +593,7 @@ BOOLN WindowGetSoundOn (winhdl *window)
 
 \******************************************************************************/
 
-void WindowSetDefAttrib (winhdl *window, WORD attrib)
+void WindowSetDefAttrib(winhdl *window, WORD attrib)
 {
   window->def_attrib = attrib;
 }
@@ -602,7 +602,7 @@ void WindowSetDefAttrib (winhdl *window, WORD attrib)
 
 \******************************************************************************/
 
-WORD WindowGetDefAttrib (winhdl *window)
+WORD WindowGetDefAttrib(winhdl *window)
 {
   return window->def_attrib;
 }
@@ -611,28 +611,28 @@ WORD WindowGetDefAttrib (winhdl *window)
 
 \******************************************************************************/
 
-void WindowSave (winhdl *window)
+void WindowSave(winhdl *window)
 {
-  window->pSavedWindow = SaveRect (window->top, window->left, window->height, window->width);
+  window->pSavedWindow = SaveRect(window->top, window->left, window->height, window->width);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowRestore  (winhdl *window)
+void WindowRestore(winhdl *window)
 {
-  RestoreRect (window->pSavedWindow);
+  RestoreRect(window->pSavedWindow);
   window->pSavedWindow = NULL;
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
-  SetCursorShape (window->cursor_shape);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
+  SetCursorShape(window->cursor_shape);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowSetLeftMargin (winhdl *window, WORD x)
+void WindowSetLeftMargin(winhdl *window, WORD x)
 {
   if (window->attributes & FRAME)
   {
@@ -650,14 +650,14 @@ void WindowSetLeftMargin (winhdl *window, WORD x)
     if (window->cursor_x - window->left < x)
       window->cursor_x = window->left + x;
   }
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
 }
 
 /******************************************************************************\
 
 \******************************************************************************/
 
-void WindowSetRightMargin (winhdl *window, WORD x)
+void WindowSetRightMargin(winhdl *window, WORD x)
 {
   window->right_margin = x;
 
@@ -669,20 +669,20 @@ void WindowSetRightMargin (winhdl *window, WORD x)
 
 \******************************************************************************/
 
-void WindowMove (winhdl *window, int y, int x)
+void WindowMove(winhdl *window, int y, int x)
 {
   WORD *pSaveWindow = NULL;
 
   if (!(window->attributes & BUFFERED))
-    pSaveWindow = SaveRect (window->top, window->left, window->height, window->width);
+    pSaveWindow = SaveRect(window->top, window->left, window->height, window->width);
   if (window->pSaveRectBuff != NULL)
-    RestoreRect (window->pSaveRectBuff);
+    RestoreRect(window->pSaveRectBuff);
   else
-    DrawRect (window->top, window->left, window->height, window->width, ' ');
+    DrawRect(window->top, window->left, window->height, window->width, ' ');
   window->top += y;
   window->left += x;
   window->cursor_x += x;
   window->cursor_y += y;
-  RestoreRectAt (pSaveWindow, window->top, window->left);
-  SetPhysicalCursorPos (window->cursor_y, window->cursor_x);
+  RestoreRectAt(pSaveWindow, window->top, window->left);
+  SetPhysicalCursorPos(window->cursor_y, window->cursor_x);
 }

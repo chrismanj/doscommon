@@ -133,6 +133,7 @@
 #define C8      143
 
 #define REST    0
+
 void SoundOn(void);
 void SoundOff(void);
 void SetFrequency(WORD);
