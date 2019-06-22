@@ -1,0 +1,1 @@
+void EditDBStructure (char *DBName);
